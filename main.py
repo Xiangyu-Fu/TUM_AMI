@@ -46,10 +46,11 @@ coco.showAnns(anns)
 plt.show()
 
 
-# show the erea of the damage
+# show the image with the damage area
 pos = anns[0]['segmentation'][0]
 print(pos[1], pos[7])
 img_seg = im[ pos[1]:pos[7], pos[0]:pos[2], :]
 
 plt.imshow(img_seg)
 plt.show()
+
