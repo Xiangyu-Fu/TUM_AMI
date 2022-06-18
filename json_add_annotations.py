@@ -46,12 +46,13 @@ class JSON_label_file:
         lines = open_label_file.read().splitlines()
         for line in lines:
             try:
-                im_id, cat_id = line.split(", ")
+                im_id, id_id, cat_id = line.split(", ")
 
                 # In COCO format, annotations is a list of dictionaries. The dictionaries contain the image_id and category_id.
                 for annotation in self.json_file['annotations']:
                     if annotation['image_id'] == int(im_id):
-                        annotation['category_id'] = int(cat_id)
+                        if annotation['id'] == int(id_id):
+                            annotation['category_id'] = int(cat_id)
             except:
                 if line == '' or line == '\n':
                     print("detected extra line at the end of file")
@@ -88,10 +89,9 @@ if __name__ == "__main__":
     # These variables are defined as if all paths are in the current working directory
     # If that is not the case, please adjust accordingly.
     json_path = "E:/AMI Project/Data/Annotations/annotated_functional_test3_fixed.json"
-    label_path = "label_example.txt"
+    label_path = "labels.txt"
     single_label_file = True
     processed_json_path = "annotated_json.txt"
 
     json_obj = JSON_label_file(json_path, label_path, single_label_file, processed_json_path)
     json_obj.execute_all_tasks()
-

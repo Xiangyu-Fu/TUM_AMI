@@ -10,7 +10,7 @@ import random
 
 
 # define the coco dataset process function
-def coco_dataset_process(save_images=False, new_label_mode=False):
+def coco_dataset_process(read_ann_from_root=True, save_images=False, new_label_mode=False):
     """
     This function processes the coco dataset and saves the images and annotations.
     :param save_images: default False. If true, the images will be saved.
@@ -21,10 +21,12 @@ def coco_dataset_process(save_images=False, new_label_mode=False):
     # Define the path to the dataset
     cocoRoot = "E:/AMI Project/Data/"
 
-    # Load COCO dataset
-    annFile = os.path.join(cocoRoot, f'Annotations/annotated_functional_test3_fixed.json')
-    print(TAG, f'Annotation file: {annFile}')
-
+    if read_ann_from_root:
+        # Load COCO dataset
+        annFile = os.path.join(cocoRoot, f'Annotations/annotated_functional_test3_fixed.json')
+        print(TAG, f'Annotation file: {annFile}')
+    else:
+        annFile = "annotated_json.txt"
     # Load annotations
     coco = COCO(annFile)
 
@@ -48,6 +50,13 @@ def coco_dataset_process(save_images=False, new_label_mode=False):
 
     # get the new annotation file
     if new_label_mode:
+        # divide the data to five subsets
+        subset_num = 5
+        subset_size = int(len(imgIds) / subset_num)
+        for i in range(subset_num):
+            # get the subset of images
+            subset_img_ids = imgIds[i * subset_size: (i + 1) * subset_size]
+
         for index, imgId in enumerate(imgIds):
             # get the image
             img = coco.loadImgs(imgId)[0]
@@ -80,13 +89,15 @@ def coco_dataset_process(save_images=False, new_label_mode=False):
             # get new label to txt file
             label = int(input(f"Please input the label for {imgId}: "))
             with open(os.path.join("label_example.txt"), "a") as f:
-                f.write(file_name + "," + str(label) + "\n")
+                f.write(str(imgId) + "," + str(anns[0]['id']) + ',' + str(label) + "\n")
 
             # save the annotation
             # ann = {'segmentation': [pos], 'area': 1, 'iscrowd': 0, 'image_id': img['id'], 'bbox': pos, 'category_id': 1, 'id': 1, 'ignore': 0, 'label': label}
 
+    demage_dict = {1: "scratch", 2: "dent", 3: "rim", 4: "other"}
+
     # show the information of the specific image
-    img_index = 5
+    img_index = 8
     img_to_show = imgIds[img_index]
     img_to_show_Info = coco.loadImgs(imgIds)[img_index]
     print(TAG, f'Image {img_to_show}\'s info: {img_to_show_Info}')
@@ -103,6 +114,9 @@ def coco_dataset_process(save_images=False, new_label_mode=False):
     annIds = coco.getAnnIds(imgIds=img_to_show_Info['id'])
     anns = coco.loadAnns(annIds)
     print(TAG, f'the annotation of the image: {anns}')
+    plt.text(0, -350, f'Damege category: {demage_dict[anns[0]["category_id"]]}', fontsize=12)
+    plt.text(0, -200, f'ID: {anns[0]["id"]}', fontsize=12)
+    print(TAG, f'The category of the damage is: {anns[0]["category_id"]}')
 
     coco.showAnns(anns)
 
@@ -117,6 +131,6 @@ def coco_dataset_process(save_images=False, new_label_mode=False):
 
 
 if __name__ == '__main__':
-    coco_dataset_process(save_images=False, new_label_mode=True)
+    coco_dataset_process(read_ann_from_root=True,save_images=False, new_label_mode=True)
 
 
