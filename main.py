@@ -97,7 +97,7 @@ def coco_dataset_process(read_ann_from_root=True, save_images=False, new_label_m
     demage_dict = {1: "scratch", 2: "dent", 3: "rim", 4: "other"}
 
     # show the information of the specific image
-    img_index = 8
+    img_index = 22
     img_to_show = imgIds[img_index]
     img_to_show_Info = coco.loadImgs(imgIds)[img_index]
     print(TAG, f'Image {img_to_show}\'s info: {img_to_show_Info}')
@@ -114,7 +114,8 @@ def coco_dataset_process(read_ann_from_root=True, save_images=False, new_label_m
     annIds = coco.getAnnIds(imgIds=img_to_show_Info['id'])
     anns = coco.loadAnns(annIds)
     print(TAG, f'the annotation of the image: {anns}')
-    plt.text(0, -350, f'Damege category: {demage_dict[anns[0]["category_id"]]}', fontsize=12)
+    if not read_ann_from_root:
+        plt.text(0, -350, f'Damege category: {demage_dict[anns[0]["category_id"]]}', fontsize=12)
     plt.text(0, -200, f'ID: {anns[0]["id"]}', fontsize=12)
     print(TAG, f'The category of the damage is: {anns[0]["category_id"]}')
 
@@ -131,6 +132,6 @@ def coco_dataset_process(read_ann_from_root=True, save_images=False, new_label_m
 
 
 if __name__ == '__main__':
-    coco_dataset_process(read_ann_from_root=True,save_images=False, new_label_mode=True)
+    coco_dataset_process(read_ann_from_root=False, save_images=False, new_label_mode=False)
 
 
